@@ -1,4 +1,4 @@
-package models
+package core
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func (u *User) HashPassword() error {
 	if err != nil {
 		return err
 	}
-	
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Pass + salt), bcrypt.DefaultCost)
 	if err != nil {
 		return err
