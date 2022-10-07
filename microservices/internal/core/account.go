@@ -19,6 +19,10 @@ type User struct {
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
+type Token struct {
+	AccessToken string
+}
+
 // Hash user password with bcrypt
 func (u *User) HashPassword() error {
 	salt, err := salt()

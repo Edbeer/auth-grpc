@@ -19,3 +19,7 @@ message Session {
     string refresh_token = 1;
     google.protobuf.Timestamp expire_at = 2;
 }
+
+message Token {
+    string access_token = 1;
+}
