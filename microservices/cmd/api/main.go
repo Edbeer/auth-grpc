@@ -13,6 +13,7 @@ import (
 	"guthub.com/Edbeer/microservices/internal/transport/grpc"
 	"guthub.com/Edbeer/microservices/internal/transport/grpc/handlers"
 	"guthub.com/Edbeer/microservices/pkg/db/psql"
+	"guthub.com/Edbeer/microservices/pkg/db/redis"
 	"guthub.com/Edbeer/microservices/pkg/jwt"
 )
 
@@ -26,9 +27,16 @@ func main() {
 	// postgres
 	psql, err := psql.NewPsqlDB(config)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Postgresql init: %s", err)
+	} else {
+		log.Printf("Postgres connected, Status: %#v\n", psql.Stats())
 	}
 	defer psql.Close()
+
+	// redis
+	redis := redis.NewRedisClient(config)
+	defer redis.Close()
+	log.Println("Redis connected")
 
 	// jwt token manager
 	manager, err := jwt.NewManager(config.GrpsServer.JwtSecretKey)

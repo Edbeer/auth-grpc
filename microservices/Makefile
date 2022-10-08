@@ -7,3 +7,6 @@ migrate-up:
 
 migrate-down:
 	migrate -path ./migrations -database "postgres://postgres:postgres@localhost:5432/acc_db?sslmode=disable" down
+
+run:
+	go run cmd/api/main.go
