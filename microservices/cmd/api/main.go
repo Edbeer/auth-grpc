@@ -10,6 +10,7 @@ import (
 	"guthub.com/Edbeer/microservices/internal/config"
 	service "guthub.com/Edbeer/microservices/internal/services"
 	postgres "guthub.com/Edbeer/microservices/internal/storage/psql"
+	redstorage "guthub.com/Edbeer/microservices/internal/storage/redis"
 	"guthub.com/Edbeer/microservices/internal/transport/grpc"
 	"guthub.com/Edbeer/microservices/internal/transport/grpc/handlers"
 	"guthub.com/Edbeer/microservices/pkg/db/psql"
@@ -46,12 +47,15 @@ func main() {
 
 	// Init storage, service and handlers
 	storagePsql := postgres.NewStorage(psql)
+	redisStorage := redstorage.NewStorage(redis)
 	service := service.NewService(service.Deps{
 		Psql: storagePsql,
+		Redis: redisStorage,
 		Manager: manager,
 	})
 	handlers := handlers.NewHandlers(handlers.Deps{
 		AccountService: service.Account,
+		SessionService: service.Session,
 	})
 
 	// Init grpc server

@@ -19,7 +19,8 @@ type User struct {
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
-type Token struct {
+type UserWithToken struct {
+	User *User
 	AccessToken string
 }
 

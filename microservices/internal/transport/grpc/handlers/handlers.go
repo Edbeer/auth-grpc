@@ -2,6 +2,7 @@ package handlers
 
 type Deps struct {
 	AccountService AccountService
+	SessionService SessionService
 }
 
 type Handlers struct {
@@ -10,6 +11,6 @@ type Handlers struct {
 
 func NewHandlers(deps Deps) *Handlers {
 	return &Handlers{
-		Account: newAccountHandler(deps.AccountService),
+		Account: newAccountHandler(deps.AccountService, deps.SessionService),
 	}
 }

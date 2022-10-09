@@ -39,6 +39,10 @@ type RedisConfig struct {
 	DB             int    `env:"DB" env-default:"0"`
 }
 
+type SessionConfig struct {
+	ExpireAt int `env:"EXPIRE" env-default:"86400"`
+}
+
 var (
 	config *Config
 	once   sync.Once

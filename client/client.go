@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"time"
 
 	accountpb "github.com/Edbeer/proto/api/account/v1"
 	"google.golang.org/grpc"
@@ -25,5 +26,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	time.Sleep(5 * time.Second)
+	r, err := client.RefreshTokens(ctx, &accountpb.RefreshTokensRequest{
+		RefreshToken: res.RefreshToken,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Printf("%+v\n", res)
+	log.Printf("%+v\n", r)
 }

@@ -17,7 +17,8 @@ message User {
 
 message Session {
     string refresh_token = 1;
-    google.protobuf.Timestamp expire_at = 2;
+    string uuid = 2;
+    google.protobuf.Timestamp expire_at = 3;
 }
 
 message Token {

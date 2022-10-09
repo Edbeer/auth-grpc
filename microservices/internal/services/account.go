@@ -55,7 +55,7 @@ func (a *accountService) SignUp(ctx context.Context, req *core.User) (*core.User
 	return user, nil
 }
 
-func (a *accountService) SignIn(ctx context.Context, user *core.User) (*core.Token, error) {
+func (a *accountService) SignIn(ctx context.Context, user *core.User) (*core.UserWithToken, error) {
 	foundUser, err := a.psql.FindByEmail(ctx, user)
 	if err != nil {
 		return nil, err
@@ -66,7 +66,27 @@ func (a *accountService) SignIn(ctx context.Context, user *core.User) (*core.Tok
 		return nil, err
 	}
 
-	return &core.Token{
+	return &core.UserWithToken{
+		User:        foundUser,
+		AccessToken: accessToken,
+	}, nil
+}
+
+// Get user by id
+func (a *accountService) GetUserByID(ctx context.Context, userId uuid.UUID) (*core.UserWithToken, error) {
+	
+	foundUser, err := a.psql.GetUserByID(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	accessToken, err := a.tokenManager.GenerateJWTToken(foundUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return &core.UserWithToken{
+		User:        foundUser,
 		AccessToken: accessToken,
 	}, nil
 }
