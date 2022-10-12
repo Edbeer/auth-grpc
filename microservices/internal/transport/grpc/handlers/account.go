@@ -2,14 +2,12 @@ package handlers
 
 import (
 	"context"
+	"time"
 
 	accountpb "github.com/Edbeer/proto/api/account/v1"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
+	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"guthub.com/Edbeer/microservices/internal/core"
-	"github.com/google/uuid"
 )
 
 type AccountService interface {
@@ -67,7 +65,8 @@ func (a *accountHandler) SignIn(ctx context.Context, req *accountpb.SignInReques
 	}
 
 	refreshToken, err := a.session.CreateSession(ctx, &core.Session{
-		Uuid: userWithToken.User.Uuid,
+		Uuid:     userWithToken.User.Uuid,
+		ExpireAt: time.Now().Add(3600),
 	}, 3600)
 
 	return &accountpb.SignInResponse{
@@ -89,7 +88,8 @@ func (a *accountHandler) RefreshTokens(ctx context.Context, req *accountpb.Refre
 	}
 
 	refreshToken, err := a.session.CreateSession(ctx, &core.Session{
-		Uuid: user.User.Uuid,
+		Uuid:     user.User.Uuid,
+		ExpireAt: time.Now().Add(3600),
 	}, 3600)
 	if err != nil {
 		return nil, err
@@ -110,18 +110,4 @@ func (a *accountHandler) userToProto(user *core.User) *accountpb.User {
 		Role:      user.Role,
 		CreatedAt: timestamppb.New(user.CreatedAt),
 	}
-}
-
-func (a *accountHandler) getRefreshTokenFromCtx(ctx context.Context) (string, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return "", status.Error(codes.Unauthenticated, "metadata.FromIncomingContext")
-	}
-
-	refreshToken := md.Get("refresh_token")
-	if refreshToken[0] == "" {
-		return "", status.Errorf(codes.PermissionDenied, "md.Get refresh_token")
-	}
-
-	return refreshToken[0], nil
 }

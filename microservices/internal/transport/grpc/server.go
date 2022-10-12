@@ -5,12 +5,16 @@ import (
 	"net"
 
 	accountpb "github.com/Edbeer/proto/api/account/v1"
+	examplepb "github.com/Edbeer/proto/api/example/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"guthub.com/Edbeer/microservices/internal/transport/grpc/interceptor"
 )
 
 type Deps struct {
 	Account accountpb.AccountServiceServer
+	Example examplepb.ExampleServiceServer
+	Interceptor *interceptor.AccountInterceptor
 }
 
 type Server struct {
@@ -21,8 +25,8 @@ type Server struct {
 func NewServer(deps Deps) *Server {
 	return &Server{
 		srv:  grpc.NewServer(
-			// grpc.UnaryInterceptor(deps.Interceptor.Unary()),
-			// grpc.StreamInterceptor(deps.Interceptor.Stream()),
+			grpc.UnaryInterceptor(deps.Interceptor.Unary()),
+			grpc.StreamInterceptor(deps.Interceptor.Stream()),
 		),
 		Deps: deps,
 	}
@@ -38,6 +42,7 @@ func (s *Server) ListenAndServe(port string) error {
 
 	// register services
 	accountpb.RegisterAccountServiceServer(s.srv, s.Deps.Account)
+	examplepb.RegisterExampleServiceServer(s.srv, s.Deps.Example)
 	// reflection grpc server
 	reflection.Register(s.srv)
 

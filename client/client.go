@@ -1,16 +1,40 @@
 package main
 
 import (
-	"context"
 	"log"
-	"time"
 
-	accountpb "github.com/Edbeer/proto/api/account/v1"
+	"github.com/Edbeer/client/internal/services"
+	"github.com/Edbeer/client/internal/interceptor"
+	examplepb "github.com/Edbeer/proto/api/example/v1"
 	"google.golang.org/grpc"
 )
 
+func hello(exampleClient *services.ExampleClient) {
+	exampleClient.Hello(&examplepb.HelloRequest{
+		Hello: "hello",
+	})
+}
+
+func world(exampleClient *services.ExampleClient) {
+	exampleClient.World(&examplepb.WorldRequest{
+		World: "world",
+	})
+}
+
+const (
+	password = "password"
+	email = "edbeermtn@gmail.com"
+)
+
+func authMethods() map[string]bool {
+	const examplePath = "/example.v1.ExampleService/"
+	return map[string]bool{
+		examplePath + "Hello": true,
+		examplePath + "World": true,
+	}
+}
+
 func main() {
-	ctx := context.Background()
 	transportOption := grpc.WithInsecure()
 	cc1, err := grpc.Dial(":8080", transportOption)
 	if err != nil {
@@ -18,21 +42,33 @@ func main() {
 	}
 	defer cc1.Close()
 
-	client := accountpb.NewAccountServiceClient(cc1)
-	res, err := client.SignIn(ctx, &accountpb.SignInRequest{
-		Email: "edbeermtn@gmail.com",
-		Password: "Password",
-	})
+	account := services.NewAccClient(cc1, password, email)
+	tokens, err := account.SignIn()
 	if err != nil {
 		log.Fatal(err)
 	}
-	time.Sleep(5 * time.Second)
-	r, err := client.RefreshTokens(ctx, &accountpb.RefreshTokensRequest{
-		RefreshToken: res.RefreshToken,
-	})
+	interceptor, err := interceptor.NewAccInterceptor(account, authMethods(), tokens[0])
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("%+v\n", res)
-	log.Printf("%+v\n", r)
+	t, err := account.RefreshTokens(tokens[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("tokens:", t)
+	cc2, err := grpc.Dial(
+		":8080", 
+		transportOption,
+		grpc.WithUnaryInterceptor(interceptor.Unary()),
+		grpc.WithStreamInterceptor(interceptor.Stream()),
+
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cc2.Close()
+
+	example := services.NewExampleClient(cc2)
+	hello(example)
+	world(example)
 }

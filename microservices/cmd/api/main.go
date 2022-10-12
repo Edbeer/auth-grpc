@@ -13,10 +13,19 @@ import (
 	redstorage "guthub.com/Edbeer/microservices/internal/storage/redis"
 	"guthub.com/Edbeer/microservices/internal/transport/grpc"
 	"guthub.com/Edbeer/microservices/internal/transport/grpc/handlers"
+	"guthub.com/Edbeer/microservices/internal/transport/grpc/interceptor"
 	"guthub.com/Edbeer/microservices/pkg/db/psql"
 	"guthub.com/Edbeer/microservices/pkg/db/redis"
 	"guthub.com/Edbeer/microservices/pkg/jwt"
 )
+
+func accessRole() map[string][]string {
+	const examplePath = "/example.v1.ExampleService/"
+	return map[string][]string{
+		examplePath + "Hello": {"admin", "user"},
+		examplePath + "World": {"admin"},
+	}
+}
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -57,10 +66,12 @@ func main() {
 		AccountService: service.Account,
 		SessionService: service.Session,
 	})
-
+	interceptor := interceptor.NewAccountInterceptor(manager, accessRole())
 	// Init grpc server
 	grpcServer := grpc.NewServer(grpc.Deps{
 		Account: handlers.Account,
+		Example: handlers.Example,
+		Interceptor: interceptor,
 	})
 
 	go func() {

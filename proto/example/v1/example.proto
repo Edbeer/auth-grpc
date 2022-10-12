@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package example.v1;
+
+option go_package = "./;examplepb";
+
+service ExampleService {
+    rpc Hello(HelloRequest) returns (HelloResponse) {};
+    rpc World(WorldRequest) returns (WorldResponse) {};
+}
+
+message HelloRequest {
+    string hello = 1;
+}
+
+message HelloResponse {
+    string hello = 1;
+}
+
+message WorldRequest {
+    string world = 1;
+}
+
+message WorldResponse {
+    string world = 1;
+}
