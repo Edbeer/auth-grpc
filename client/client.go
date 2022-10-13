@@ -43,19 +43,10 @@ func main() {
 	defer cc1.Close()
 
 	account := services.NewAccClient(cc1, password, email)
-	tokens, err := account.SignIn()
+	interceptor, err := interceptor.NewAccInterceptor(account, authMethods())
 	if err != nil {
 		log.Fatal(err)
 	}
-	interceptor, err := interceptor.NewAccInterceptor(account, authMethods(), tokens[0])
-	if err != nil {
-		log.Fatal(err)
-	}
-	t, err := account.RefreshTokens(tokens[1])
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("tokens:", t)
 	cc2, err := grpc.Dial(
 		":8080", 
 		transportOption,

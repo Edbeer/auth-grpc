@@ -3,7 +3,6 @@ package interceptor
 import (
 	"context"
 	"log"
-	// "sync"
 
 
 	"github.com/Edbeer/client/internal/services"
@@ -20,14 +19,15 @@ type AccInterceptor struct {
 func NewAccInterceptor(
 	accClient *services.AccClient,
 	accMethods map[string]bool,
-	accessToken string,
 ) (*AccInterceptor, error) {
 	interceptor := &AccInterceptor{
 		accClient:  accClient,
 		accMethods: accMethods,
-		accessToken: accessToken,
 	}
-	log.Println("accessToken:", accessToken)
+	err := interceptor.refreshTokens()
+	if err != nil {
+		log.Fatal(err)
+	}
 	return interceptor, nil
 }
 
@@ -79,5 +79,15 @@ func (interceptor *AccInterceptor) Stream() grpc.StreamClientInterceptor {
 
 func (interceptor *AccInterceptor) attachToken(ctx context.Context) context.Context {
 	return metadata.AppendToOutgoingContext(ctx, "authorization", interceptor.accessToken)
+}
+
+func (interceptor *AccInterceptor) refreshTokens() error {
+	tokens, err := interceptor.accClient.SignIn()
+	if err != nil {
+		return err
+	}
+	interceptor.accessToken = tokens[0]
+	log.Printf("token refresh: %v", tokens[0])
+	return nil
 }
 
