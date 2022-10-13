@@ -11,6 +11,7 @@ type Config struct {
 	GrpsServer GrpcServerConfig
 	Postgres   PostgresConfig
 	Redis      RedisConfig
+	Session    SessionConfig
 }
 
 type GrpcServerConfig struct {

@@ -7,6 +7,7 @@ import (
 	accountpb "github.com/Edbeer/proto/api/account/v1"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"guthub.com/Edbeer/microservices/internal/config"
 	"guthub.com/Edbeer/microservices/internal/core"
 )
 
@@ -26,12 +27,18 @@ type accountHandler struct {
 	accountpb.UnimplementedAccountServiceServer
 	service AccountService
 	session SessionService
+	config  *config.Config
 }
 
-func newAccountHandler(service AccountService, session SessionService) *accountHandler {
+func newAccountHandler(
+	service AccountService,
+	session SessionService,
+	config *config.Config,
+) *accountHandler {
 	return &accountHandler{
 		service: service,
 		session: session,
+		config:  config,
 	}
 }
 
@@ -66,8 +73,8 @@ func (a *accountHandler) SignIn(ctx context.Context, req *accountpb.SignInReques
 
 	refreshToken, err := a.session.CreateSession(ctx, &core.Session{
 		Uuid:     userWithToken.User.Uuid,
-		ExpireAt: time.Now().Add(3600),
-	}, 3600)
+		ExpireAt: time.Now().Add(time.Duration(a.config.Session.ExpireAt)),
+	}, a.config.Session.ExpireAt)
 
 	return &accountpb.SignInResponse{
 		AccessToken:  userWithToken.AccessToken,
@@ -89,8 +96,8 @@ func (a *accountHandler) RefreshTokens(ctx context.Context, req *accountpb.Refre
 
 	refreshToken, err := a.session.CreateSession(ctx, &core.Session{
 		Uuid:     user.User.Uuid,
-		ExpireAt: time.Now().Add(3600),
-	}, 3600)
+		ExpireAt: time.Now().Add(time.Duration(a.config.Session.ExpireAt)),
+	}, a.config.Session.ExpireAt)
 	if err != nil {
 		return nil, err
 	}

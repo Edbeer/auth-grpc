@@ -58,19 +58,21 @@ func main() {
 	storagePsql := postgres.NewStorage(psql)
 	redisStorage := redstorage.NewStorage(redis)
 	service := service.NewService(service.Deps{
-		Psql: storagePsql,
-		Redis: redisStorage,
+		Psql:    storagePsql,
+		Redis:   redisStorage,
 		Manager: manager,
 	})
 	handlers := handlers.NewHandlers(handlers.Deps{
 		AccountService: service.Account,
 		SessionService: service.Session,
+		Config:         config,
 	})
+	// authorization interceptor
 	interceptor := interceptor.NewAccountInterceptor(manager, accessRole())
 	// Init grpc server
 	grpcServer := grpc.NewServer(grpc.Deps{
-		Account: handlers.Account,
-		Example: handlers.Example,
+		Account:     handlers.Account,
+		Example:     handlers.Example,
 		Interceptor: interceptor,
 	})
 
