@@ -23,11 +23,16 @@ type AccountInterceptor struct {
 	accessRole map[string][]string
 }
 
-func NewAccountInterceptor(manager Manager, accessRole map[string][]string) *AccountInterceptor {
+func NewAccountInterceptor(manager Manager) *AccountInterceptor {
 	return &AccountInterceptor{
 		manager:    manager,
-		accessRole: accessRole,
+		accessRole: make(map[string][]string),
 	}
+}
+
+// SetMinimumPermissionLevelForMethod sets the minimum permission level required to use the given method
+func (a *AccountInterceptor) SetMinimumPermissionLevelForMethod(method string, role ...string) {
+	a.accessRole[method] = role
 }
 
 // Unary returns a server interceptor function to authenticate and
@@ -71,8 +76,9 @@ func (a *AccountInterceptor) Stream() grpc.StreamServerInterceptor {
 }
 
 func (a *AccountInterceptor) authorize(ctx context.Context, method string) error {
-	accessRole, ok := a.accessRole[method]
-	if !ok {
+	accessRole := a.accessRole[method]
+	if accessRole == nil {
+		// method for everybody
 		return nil
 	}
 

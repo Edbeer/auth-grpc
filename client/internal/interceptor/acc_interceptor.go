@@ -18,17 +18,21 @@ type AccInterceptor struct {
 
 func NewAccInterceptor(
 	accClient *services.AccClient,
-	accMethods map[string]bool,
 ) (*AccInterceptor, error) {
 	interceptor := &AccInterceptor{
 		accClient:  accClient,
-		accMethods: accMethods,
+		accMethods: make(map[string]bool),
 	}
 	err := interceptor.refreshTokens()
 	if err != nil {
 		log.Fatal(err)
 	}
 	return interceptor, nil
+}
+
+// AuthMethods
+func (interceptor *AccInterceptor) AuthMethods(method string, ok bool) {
+	interceptor.accMethods[method] = ok
 }
 
 func (interceptor *AccInterceptor) Unary() grpc.UnaryClientInterceptor {

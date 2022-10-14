@@ -3,10 +3,12 @@ package main
 import (
 	"log"
 
-	"github.com/Edbeer/client/internal/services"
 	"github.com/Edbeer/client/internal/interceptor"
+	"github.com/Edbeer/client/internal/services"
 	examplepb "github.com/Edbeer/proto/api/example/v1"
+
 	"google.golang.org/grpc"
+
 )
 
 func hello(exampleClient *services.ExampleClient) {
@@ -26,16 +28,9 @@ const (
 	email = "edbeermtn@gmail.com"
 )
 
-func authMethods() map[string]bool {
-	const examplePath = "/example.v1.ExampleService/"
-	return map[string]bool{
-		examplePath + "Hello": true,
-		examplePath + "World": true,
-	}
-}
-
 func main() {
 	transportOption := grpc.WithInsecure()
+	// cc1
 	cc1, err := grpc.Dial(":8080", transportOption)
 	if err != nil {
 		log.Fatal(err)
@@ -43,10 +38,13 @@ func main() {
 	defer cc1.Close()
 
 	account := services.NewAccClient(cc1, password, email)
-	interceptor, err := interceptor.NewAccInterceptor(account, authMethods())
+	interceptor, err := interceptor.NewAccInterceptor(account)
 	if err != nil {
 		log.Fatal(err)
 	}
+	interceptor.AuthMethods("/example.v1.ExampleService/Hello", true)
+	interceptor.AuthMethods("/example.v1.ExampleService/World", true)
+	// cc2
 	cc2, err := grpc.Dial(
 		":8080", 
 		transportOption,

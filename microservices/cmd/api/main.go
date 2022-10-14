@@ -19,14 +19,6 @@ import (
 	"guthub.com/Edbeer/microservices/pkg/jwt"
 )
 
-func accessRole() map[string][]string {
-	const examplePath = "/example.v1.ExampleService/"
-	return map[string][]string{
-		examplePath + "Hello": {"admin", "user"},
-		examplePath + "World": {"admin"},
-	}
-}
-
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -68,7 +60,9 @@ func main() {
 		Config:         config,
 	})
 	// authorization interceptor
-	interceptor := interceptor.NewAccountInterceptor(manager, accessRole())
+	interceptor := interceptor.NewAccountInterceptor(manager)
+	interceptor.SetMinimumPermissionLevelForMethod("/example.v1.ExampleService/Hello", "admin")
+	interceptor.SetMinimumPermissionLevelForMethod("/example.v1.ExampleService/World")
 	// Init grpc server
 	grpcServer := grpc.NewServer(grpc.Deps{
 		Account:     handlers.Account,
