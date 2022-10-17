@@ -45,7 +45,7 @@ func (a *accountStorage) FindByEmail(ctx context.Context, user *core.User) (*cor
 func (a *accountStorage) GetUserByID(ctx context.Context, userID uuid.UUID) (*core.User, error) {
 	
 	u := &core.User{}
-	query := `SELECT user_id, name, email, password, created_at
+	query := `SELECT user_id, name, email, password, role, created_at
 		FROM users
 		WHERE user_id = $1`
 	if err := a.psql.QueryRowxContext(ctx, query, userID).StructScan(u); err != nil {

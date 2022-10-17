@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"time"
 
 	accountpb "github.com/Edbeer/proto/api/account/v1"
 	"github.com/google/uuid"
@@ -73,7 +72,6 @@ func (a *accountHandler) SignIn(ctx context.Context, req *accountpb.SignInReques
 
 	refreshToken, err := a.session.CreateSession(ctx, &core.Session{
 		Uuid:     userWithToken.User.Uuid,
-		ExpireAt: time.Now().Add(time.Duration(a.config.Session.ExpireAt)),
 	}, a.config.Session.ExpireAt)
 
 	return &accountpb.SignInResponse{
@@ -96,7 +94,6 @@ func (a *accountHandler) RefreshTokens(ctx context.Context, req *accountpb.Refre
 
 	refreshToken, err := a.session.CreateSession(ctx, &core.Session{
 		Uuid:     user.User.Uuid,
-		ExpireAt: time.Now().Add(time.Duration(a.config.Session.ExpireAt)),
 	}, a.config.Session.ExpireAt)
 	if err != nil {
 		return nil, err
