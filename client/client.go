@@ -60,4 +60,5 @@ func main() {
 	example := services.NewExampleClient(cc2)
 	hello(example)
 	world(example)
+	account.SignOut(interceptor.RefreshToken)
 }

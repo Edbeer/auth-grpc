@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log"
 
 	"time"
 
@@ -55,4 +56,20 @@ func (client *AccClient) RefreshTokens(token string) ([]string, error) {
 	}
 	tokens := []string{res.GetAccessToken(), res.GetRefreshToken()}
 	return tokens, nil
+}
+
+func (client *AccClient) SignOut(token string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+	defer cancel()
+
+	req := &accountpb.SignOutRequest{
+		RefreshToken: token,
+	}
+
+	res, err := client.service.SignOut(ctx, req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("acc exist: ", res)
 }

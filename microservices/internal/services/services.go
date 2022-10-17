@@ -18,7 +18,7 @@ type Service struct {
 
 func NewService(deps Deps) *Service {
 	return &Service{
-		Account: newAccountService(deps.Psql.Account, deps.Manager),
+		Account: newAccountService(deps.Psql.Account, deps.Redis.Account, deps.Manager),
 		Session: newSessionService(deps.Redis.Session),
 	}
 }

@@ -108,6 +108,21 @@ func (a *accountHandler) RefreshTokens(ctx context.Context, req *accountpb.Refre
 	}, nil
 }
 
+// Logout user, delete current session
+func (a *accountHandler) Logout(ctx context.Context, req *accountpb.SignOutRequest) (*accountpb.SignOutResponse, error) {
+
+	session, err := a.session.GetSessionByToken(ctx, req.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := a.session.DeleteSession(ctx, session.RefreshToken); err != nil {
+		return nil, err
+	}
+
+	return &accountpb.SignOutResponse{}, nil
+}
+
 func (a *accountHandler) userToProto(user *core.User) *accountpb.User {
 	return &accountpb.User{
 		Uuid:      user.Uuid.String(),

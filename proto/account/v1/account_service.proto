@@ -10,6 +10,7 @@ service AccountService {
     rpc SignUp(SignUpRequest) returns (SignUpResponse) {};
     rpc SignIn(SignInRequest) returns (SignInResponse) {};
     rpc RefreshTokens(RefreshTokensRequest) returns (RefreshTokensResponse) {};
+    rpc SignOut(SignOutRequest) returns (SignOutResponse) {};
 }
 
 message SignUpRequest {
@@ -41,3 +42,9 @@ message RefreshTokensResponse {
     string access_token = 1;
     string refresh_token = 2;
 }
+
+message SignOutRequest {
+    string refresh_token = 1;
+}
+
+message SignOutResponse {}
