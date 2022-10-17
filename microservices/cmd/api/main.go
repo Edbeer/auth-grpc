@@ -63,6 +63,7 @@ func main() {
 	interceptor := interceptor.NewAccountInterceptor(manager)
 	interceptor.SetMinimumPermissionLevelForMethod("/example.v1.ExampleService/Hello", "admin")
 	interceptor.SetMinimumPermissionLevelForMethod("/example.v1.ExampleService/World")
+	interceptor.SetMinimumPermissionLevelForMethod("/example.v1.ExampleService/StreamWorld", "admin")
 	// Init grpc server
 	grpcServer := grpc.NewServer(grpc.Deps{
 		Account:     handlers.Account,

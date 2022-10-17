@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ExampleServiceClient interface {
 	Hello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloResponse, error)
 	World(ctx context.Context, in *WorldRequest, opts ...grpc.CallOption) (*WorldResponse, error)
+	StreamWorld(ctx context.Context, opts ...grpc.CallOption) (ExampleService_StreamWorldClient, error)
 }
 
 type exampleServiceClient struct {
@@ -52,12 +53,44 @@ func (c *exampleServiceClient) World(ctx context.Context, in *WorldRequest, opts
 	return out, nil
 }
 
+func (c *exampleServiceClient) StreamWorld(ctx context.Context, opts ...grpc.CallOption) (ExampleService_StreamWorldClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ExampleService_ServiceDesc.Streams[0], "/example.v1.ExampleService/StreamWorld", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &exampleServiceStreamWorldClient{stream}
+	return x, nil
+}
+
+type ExampleService_StreamWorldClient interface {
+	Send(*StreamWorldRequest) error
+	Recv() (*StreamWorldResponse, error)
+	grpc.ClientStream
+}
+
+type exampleServiceStreamWorldClient struct {
+	grpc.ClientStream
+}
+
+func (x *exampleServiceStreamWorldClient) Send(m *StreamWorldRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *exampleServiceStreamWorldClient) Recv() (*StreamWorldResponse, error) {
+	m := new(StreamWorldResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ExampleServiceServer is the server API for ExampleService service.
 // All implementations must embed UnimplementedExampleServiceServer
 // for forward compatibility
 type ExampleServiceServer interface {
 	Hello(context.Context, *HelloRequest) (*HelloResponse, error)
 	World(context.Context, *WorldRequest) (*WorldResponse, error)
+	StreamWorld(ExampleService_StreamWorldServer) error
 	mustEmbedUnimplementedExampleServiceServer()
 }
 
@@ -70,6 +103,9 @@ func (UnimplementedExampleServiceServer) Hello(context.Context, *HelloRequest) (
 }
 func (UnimplementedExampleServiceServer) World(context.Context, *WorldRequest) (*WorldResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method World not implemented")
+}
+func (UnimplementedExampleServiceServer) StreamWorld(ExampleService_StreamWorldServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamWorld not implemented")
 }
 func (UnimplementedExampleServiceServer) mustEmbedUnimplementedExampleServiceServer() {}
 
@@ -120,6 +156,32 @@ func _ExampleService_World_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ExampleService_StreamWorld_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ExampleServiceServer).StreamWorld(&exampleServiceStreamWorldServer{stream})
+}
+
+type ExampleService_StreamWorldServer interface {
+	Send(*StreamWorldResponse) error
+	Recv() (*StreamWorldRequest, error)
+	grpc.ServerStream
+}
+
+type exampleServiceStreamWorldServer struct {
+	grpc.ServerStream
+}
+
+func (x *exampleServiceStreamWorldServer) Send(m *StreamWorldResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *exampleServiceStreamWorldServer) Recv() (*StreamWorldRequest, error) {
+	m := new(StreamWorldRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ExampleService_ServiceDesc is the grpc.ServiceDesc for ExampleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -136,6 +198,13 @@ var ExampleService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ExampleService_World_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamWorld",
+			Handler:       _ExampleService_StreamWorld_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "example/v1/example.proto",
 }

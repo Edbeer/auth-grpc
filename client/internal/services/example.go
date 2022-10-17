@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"io"
 	"log"
 	"time"
 
@@ -36,4 +37,36 @@ func (e *ExampleClient) World(req *examplepb.WorldRequest) {
 		log.Fatal("Bad world")
 	}
 	log.Printf("World: %s", world.World)
+}
+
+func (e *ExampleClient) StreamWorld() {
+	ctx, cancel := context.WithTimeout(context.Background(), 10 *time.Second)
+	defer cancel()
+
+	stream, err := e.service.StreamWorld(ctx)
+	if err != nil {
+		log.Fatal("Stream", err)
+	}
+	for i := 0; i < 3; i++ {
+		if err := stream.Send(&examplepb.StreamWorldRequest{
+			Hello: "Hello",
+		}); err != nil {
+			log.Fatal("send", err)
+		}
+		log.Println("Hello")
+	}
+
+	if err := stream.CloseSend(); err != nil {
+		log.Fatal("close stream", err)
+	}
+	for {
+		res, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal("recv", err)
+		}
+		log.Printf("%s\n", res)
+	}
 }

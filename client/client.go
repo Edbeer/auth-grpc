@@ -23,6 +23,10 @@ func world(exampleClient *services.ExampleClient) {
 	})
 }
 
+func streamWorld(exampleClient *services.ExampleClient) {
+	exampleClient.StreamWorld()
+}
+
 const (
 	password = "password"
 	email = "edbeermtn@gmail.com"
@@ -44,6 +48,7 @@ func main() {
 	}
 	interceptor.AuthMethods("/example.v1.ExampleService/Hello", true)
 	interceptor.AuthMethods("/example.v1.ExampleService/World", true)
+	interceptor.AuthMethods("/example.v1.ExampleService/StreamWorld", true)
 	// cc2
 	cc2, err := grpc.Dial(
 		":8080", 
@@ -60,5 +65,6 @@ func main() {
 	example := services.NewExampleClient(cc2)
 	hello(example)
 	world(example)
-	account.SignOut(interceptor.RefreshToken)
+	streamWorld(example)
+	// account.SignOut(interceptor.RefreshToken)
 }

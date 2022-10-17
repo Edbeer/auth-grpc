@@ -15,7 +15,7 @@ type AccInterceptor struct {
 	accMethods  map[string]bool
 	accessToken string
 	// for test signOut
-	RefreshToken string
+	// RefreshToken string
 }
 
 func NewAccInterceptor(
@@ -93,7 +93,7 @@ func (interceptor *AccInterceptor) refreshTokens() error {
 		return err
 	}
 	interceptor.accessToken = tokens[0]
-	interceptor.RefreshToken = tokens[1]
+	// interceptor.RefreshToken = tokens[1]
 	log.Printf("token refresh: %v", tokens[0])
 	return nil
 }
