@@ -7,16 +7,16 @@ import (
 	"os/signal"
 	"syscall"
 
-	"guthub.com/Edbeer/microservices/internal/config"
-	service "guthub.com/Edbeer/microservices/internal/services"
-	postgres "guthub.com/Edbeer/microservices/internal/storage/psql"
-	redstorage "guthub.com/Edbeer/microservices/internal/storage/redis"
-	"guthub.com/Edbeer/microservices/internal/transport/grpc"
-	"guthub.com/Edbeer/microservices/internal/transport/grpc/handlers"
-	"guthub.com/Edbeer/microservices/internal/transport/grpc/interceptor"
-	"guthub.com/Edbeer/microservices/pkg/db/psql"
-	"guthub.com/Edbeer/microservices/pkg/db/redis"
-	"guthub.com/Edbeer/microservices/pkg/jwt"
+	"github.com/Edbeer/microservices/internal/config"
+	service "github.com/Edbeer/microservices/internal/services"
+	postgres "github.com/Edbeer/microservices/internal/storage/psql"
+	redstorage "github.com/Edbeer/microservices/internal/storage/redis"
+	"github.com/Edbeer/microservices/internal/transport/grpc"
+	"github.com/Edbeer/microservices/internal/transport/grpc/handlers"
+	"github.com/Edbeer/microservices/internal/transport/grpc/interceptor"
+	"github.com/Edbeer/microservices/pkg/db/psql"
+	"github.com/Edbeer/microservices/pkg/db/redis"
+	"github.com/Edbeer/microservices/pkg/jwt"
 )
 
 func main() {

@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/require"
-	"guthub.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/internal/core"
 )
 
 func Test_Create(t *testing.T) {

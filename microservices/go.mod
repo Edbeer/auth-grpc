@@ -1,4 +1,4 @@
-module guthub.com/Edbeer/microservices
+module github.com/Edbeer/microservices
 
 go 1.19
 

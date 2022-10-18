@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"guthub.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/internal/core"
 )
 
 // Manager

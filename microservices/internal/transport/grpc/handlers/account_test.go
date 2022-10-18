@@ -9,9 +9,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"guthub.com/Edbeer/microservices/internal/config"
-	"guthub.com/Edbeer/microservices/internal/core"
-	"guthub.com/Edbeer/microservices/internal/services/mock"
+	"github.com/Edbeer/microservices/internal/config"
+	"github.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/internal/services/mock"
 )
 
 func TestUsersService_Register(t *testing.T) {

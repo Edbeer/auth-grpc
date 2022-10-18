@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	core "guthub.com/Edbeer/microservices/internal/core"
+	core "github.com/Edbeer/microservices/internal/core"
 )
 
 // MockSessionStorage is a mock of SessionStorage interface.

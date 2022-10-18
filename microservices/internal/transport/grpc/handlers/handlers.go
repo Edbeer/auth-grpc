@@ -1,6 +1,6 @@
 package handlers
 
-import "guthub.com/Edbeer/microservices/internal/config"
+import "github.com/Edbeer/microservices/internal/config"
 
 type Deps struct {
 	AccountService AccountService

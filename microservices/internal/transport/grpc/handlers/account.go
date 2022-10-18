@@ -6,8 +6,8 @@ import (
 	accountpb "github.com/Edbeer/proto/api/account/v1"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"guthub.com/Edbeer/microservices/internal/config"
-	"guthub.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/internal/config"
+	"github.com/Edbeer/microservices/internal/core"
 )
 
 type AccountService interface {

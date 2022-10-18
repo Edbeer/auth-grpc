@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"guthub.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/internal/core"
 )
 
 type sessionStorage interface {

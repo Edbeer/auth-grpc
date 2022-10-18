@@ -10,7 +10,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
-	core "guthub.com/Edbeer/microservices/internal/core"
+	core "github.com/Edbeer/microservices/internal/core"
 )
 
 // MockAccountStorage is a mock of AccountStorage interface.

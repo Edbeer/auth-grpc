@@ -9,7 +9,7 @@ import (
 	"github.com/go-redis/redis/v9"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"guthub.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/internal/core"
 )
 
 func SetupSessionRedis() *sessionStorage {

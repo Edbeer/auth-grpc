@@ -7,8 +7,8 @@ import (
 	"github.com/golang/mock/gomock"
 
 	"github.com/stretchr/testify/require"
-	"guthub.com/Edbeer/microservices/internal/core"
-	mockredis "guthub.com/Edbeer/microservices/internal/storage/redis/mock"
+	"github.com/Edbeer/microservices/internal/core"
+	mockredis "github.com/Edbeer/microservices/internal/storage/redis/mock"
 )
 
 func TestService_CreateSession(t *testing.T) {

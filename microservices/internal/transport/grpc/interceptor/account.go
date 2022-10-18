@@ -8,8 +8,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"guthub.com/Edbeer/microservices/internal/core"
-	"guthub.com/Edbeer/microservices/pkg/jwt"
+	"github.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/pkg/jwt"
 )
 
 // Token Manager interface

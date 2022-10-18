@@ -1,8 +1,8 @@
 package service
 
 import (
-	"guthub.com/Edbeer/microservices/internal/storage/psql"
-	"guthub.com/Edbeer/microservices/internal/storage/redis"
+	"github.com/Edbeer/microservices/internal/storage/psql"
+	"github.com/Edbeer/microservices/internal/storage/redis"
 )
 
 type Deps struct {

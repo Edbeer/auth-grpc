@@ -8,7 +8,7 @@ import (
 	examplepb "github.com/Edbeer/proto/api/example/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"guthub.com/Edbeer/microservices/internal/transport/grpc/interceptor"
+	"github.com/Edbeer/microservices/internal/transport/grpc/interceptor"
 )
 
 type Deps struct {

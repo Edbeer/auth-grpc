@@ -4,7 +4,7 @@ package redstorage
 import (
 	"context"
 
-	"guthub.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/internal/core"
 )
 
 type SessionStorage interface {

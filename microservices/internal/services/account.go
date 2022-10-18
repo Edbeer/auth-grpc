@@ -6,9 +6,9 @@ import (
 	"log"
 
 	"github.com/google/uuid"
-	"guthub.com/Edbeer/microservices/internal/core"
-	"guthub.com/Edbeer/microservices/pkg/jwt"
-	"guthub.com/Edbeer/microservices/pkg/utils"
+	"github.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/pkg/jwt"
+	"github.com/Edbeer/microservices/pkg/utils"
 )
 
 // Token Manager interface

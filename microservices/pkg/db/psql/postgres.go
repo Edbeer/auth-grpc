@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
-	"guthub.com/Edbeer/microservices/internal/config"
+	"github.com/Edbeer/microservices/internal/config"
 )
 
 const (

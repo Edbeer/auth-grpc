@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v9"
-	"guthub.com/Edbeer/microservices/internal/core"
+	"github.com/Edbeer/microservices/internal/core"
 )
 
 type sessionStorage struct {

@@ -8,12 +8,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/bcrypt"
-	"guthub.com/Edbeer/microservices/internal/config"
-	"guthub.com/Edbeer/microservices/internal/core"
-	psql "guthub.com/Edbeer/microservices/internal/storage/psql/mock"
-	redis "guthub.com/Edbeer/microservices/internal/storage/redis/mock"
+	"github.com/Edbeer/microservices/internal/config"
+	"github.com/Edbeer/microservices/internal/core"
+	psql "github.com/Edbeer/microservices/internal/storage/psql/mock"
+	redis "github.com/Edbeer/microservices/internal/storage/redis/mock"
 
-	"guthub.com/Edbeer/microservices/pkg/jwt"
+	"github.com/Edbeer/microservices/pkg/jwt"
 )
 
 func TestService_SignUp(t *testing.T) {
