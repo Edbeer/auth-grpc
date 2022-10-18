@@ -4,8 +4,8 @@ import (
 	"log"
 	"net"
 
-	accountpb "github.com/Edbeer/proto/api/account/v1"
-	examplepb "github.com/Edbeer/proto/api/example/v1"
+	accountpb "github.com/Edbeer/microservices/proto/api/account/v1"
+	examplepb "github.com/Edbeer/microservices/proto/api/example/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"github.com/Edbeer/microservices/internal/transport/grpc/interceptor"

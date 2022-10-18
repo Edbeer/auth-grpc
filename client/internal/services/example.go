@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	examplepb "github.com/Edbeer/proto/api/example/v1"
+	examplepb "github.com/Edbeer/client/proto/api/example/v1"
 	"google.golang.org/grpc"
 )
 

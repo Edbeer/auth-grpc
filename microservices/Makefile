@@ -13,3 +13,9 @@ run:
 
 test:
 	go test -cover -race ./...
+
+lint:
+	cd proto && buf lint
+
+gen: lint
+	cd proto && buf generate

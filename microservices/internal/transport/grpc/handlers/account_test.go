@@ -5,7 +5,7 @@ import (
 	"testing"
 
 
-	accountpb "github.com/Edbeer/proto/api/account/v1"
+	accountpb "github.com/Edbeer/microservices/proto/api/account/v1"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"

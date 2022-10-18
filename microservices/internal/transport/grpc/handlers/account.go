@@ -3,11 +3,11 @@ package handlers
 import (
 	"context"
 
-	accountpb "github.com/Edbeer/proto/api/account/v1"
-	"github.com/google/uuid"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"github.com/Edbeer/microservices/internal/config"
 	"github.com/Edbeer/microservices/internal/core"
+	accountpb "github.com/Edbeer/microservices/proto/api/account/v1"
+	"github.com/google/uuid"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type AccountService interface {
