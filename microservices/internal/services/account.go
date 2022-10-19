@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/google/uuid"
 	"github.com/Edbeer/microservices/internal/core"
 	"github.com/Edbeer/microservices/pkg/jwt"
 	"github.com/Edbeer/microservices/pkg/utils"
+	"github.com/google/uuid"
+	"github.com/opentracing/opentracing-go"
 )
 
 // Token Manager interface
@@ -45,6 +46,9 @@ func newAccountService(psql accountStorage, redis redisStorage, tokenManager Man
 }
 
 func (a *accountService) SignUp(ctx context.Context, req *core.User) (*core.User, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "accountService.SignUp")
+	defer span.Finish()
+	
 	foundUser, err := a.psql.FindByEmail(ctx, req)
 	if err == nil || foundUser != nil {
 		return nil, err
@@ -67,6 +71,9 @@ func (a *accountService) SignUp(ctx context.Context, req *core.User) (*core.User
 }
 
 func (a *accountService) SignIn(ctx context.Context, user *core.User) (*core.UserWithToken, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "accountService.SignIn")
+	defer span.Finish()
+	
 	foundUser, err := a.psql.FindByEmail(ctx, user)
 	if err != nil {
 		return nil, err
@@ -85,6 +92,9 @@ func (a *accountService) SignIn(ctx context.Context, user *core.User) (*core.Use
 
 // Get user by id
 func (a *accountService) GetUserByID(ctx context.Context, userId uuid.UUID) (*core.UserWithToken, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "accountService.GetUserByID")
+	defer span.Finish()
+	
 	// Looking for a cached user
 	cachedUser, err := a.redis.GetByIDCtx(ctx, userId.String())
 	if err != nil {

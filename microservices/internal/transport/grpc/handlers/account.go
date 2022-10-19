@@ -7,6 +7,7 @@ import (
 	"github.com/Edbeer/microservices/internal/core"
 	accountpb "github.com/Edbeer/microservices/proto/api/account/v1"
 	"github.com/google/uuid"
+	"github.com/opentracing/opentracing-go"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -42,6 +43,9 @@ func newAccountHandler(
 }
 
 func (a *accountHandler) SignUp(ctx context.Context, req *accountpb.SignUpRequest) (*accountpb.SignUpResponse, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "account.SignUp")
+	defer span.Finish()
+	
 	u := &core.User{
 		Name:  req.Name,
 		Email: req.Email,
@@ -60,6 +64,9 @@ func (a *accountHandler) SignUp(ctx context.Context, req *accountpb.SignUpReques
 }
 
 func (a *accountHandler) SignIn(ctx context.Context, req *accountpb.SignInRequest) (*accountpb.SignInResponse, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "account.SignIn")
+	defer span.Finish()
+	
 	user := &core.User{
 		Email: req.Email,
 		Pass:  req.Password,
@@ -81,6 +88,8 @@ func (a *accountHandler) SignIn(ctx context.Context, req *accountpb.SignInReques
 }
 
 func (a *accountHandler) RefreshTokens(ctx context.Context, req *accountpb.RefreshTokensRequest) (*accountpb.RefreshTokensResponse, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "account.RefreshTokens")
+	defer span.Finish()
 
 	session, err := a.session.GetSessionByToken(ctx, req.RefreshToken)
 	if err != nil {
@@ -107,6 +116,8 @@ func (a *accountHandler) RefreshTokens(ctx context.Context, req *accountpb.Refre
 
 // Logout user, delete current session
 func (a *accountHandler) Logout(ctx context.Context, req *accountpb.SignOutRequest) (*accountpb.SignOutResponse, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "account.Logout")
+	defer span.Finish()
 
 	session, err := a.session.GetSessionByToken(ctx, req.RefreshToken)
 	if err != nil {

@@ -17,9 +17,15 @@ import (
 	"github.com/Edbeer/microservices/pkg/db/psql"
 	"github.com/Edbeer/microservices/pkg/db/redis"
 	"github.com/Edbeer/microservices/pkg/jwt"
+	jaegerlog "github.com/uber/jaeger-client-go/log"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
+	"github.com/uber/jaeger-client-go"
+	"github.com/uber/jaeger-lib/metrics"
+	"github.com/opentracing/opentracing-go"
 )
 
 func main() {
+	// context
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -40,6 +46,32 @@ func main() {
 	defer redis.Close()
 	log.Println("Redis connected")
 
+	// jaeger init
+	jaegerCfgInstance := jaegercfg.Configuration{
+		ServiceName: config.Jaeger.ServiceName,
+		Sampler: &jaegercfg.SamplerConfig{
+			Type:  jaeger.SamplerTypeConst,
+			Param: 1,
+		},
+		Reporter: &jaegercfg.ReporterConfig{
+			LogSpans:           config.Jaeger.LogSpans,
+			LocalAgentHostPort: config.Jaeger.Host,
+		},
+	}
+
+	tracer, closer, err := jaegerCfgInstance.NewTracer(
+		jaegercfg.Logger(jaegerlog.StdLogger),
+		jaegercfg.Metrics(metrics.NullFactory),
+	)
+	if err != nil {
+		log.Fatal("cannot create tracer", err)
+	}
+	log.Println("Jaeger connected")
+
+	opentracing.SetGlobalTracer(tracer)
+	defer closer.Close()
+	log.Println("Opentracing connected")
+	
 	// jwt token manager
 	manager, err := jwt.NewManager(config.GrpsServer.JwtSecretKey)
 	if err != nil {
