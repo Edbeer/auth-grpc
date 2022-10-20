@@ -5,7 +5,7 @@ import (
 	"log"
 
 
-	"github.com/Edbeer/client/internal/services"
+	"github.com/Edbeer/microservices/cmd/client/internal/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )

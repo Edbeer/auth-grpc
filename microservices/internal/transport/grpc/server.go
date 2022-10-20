@@ -4,11 +4,12 @@ import (
 	"log"
 	"net"
 
+	"github.com/Edbeer/microservices/cert"
+	"github.com/Edbeer/microservices/internal/transport/grpc/interceptor"
 	accountpb "github.com/Edbeer/microservices/proto/api/account/v1"
 	examplepb "github.com/Edbeer/microservices/proto/api/example/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"github.com/Edbeer/microservices/internal/transport/grpc/interceptor"
 )
 
 type Deps struct {
@@ -23,8 +24,14 @@ type Server struct {
 }
 
 func NewServer(deps Deps) *Server {
+	// tlsCredentials
+	tlsCredentials, err := cert.LoadTLSCredentialsServer()
+	if err != nil {
+		log.Fatal("cannot load TLS credentials: ", err)
+	}
 	return &Server{
 		srv:  grpc.NewServer(
+			grpc.Creds(tlsCredentials),
 			grpc.UnaryInterceptor(deps.Interceptor.Unary()),
 			grpc.StreamInterceptor(deps.Interceptor.Stream()),
 		),

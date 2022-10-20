@@ -3,12 +3,12 @@ package main
 import (
 	"log"
 
-	"github.com/Edbeer/client/internal/interceptor"
-	"github.com/Edbeer/client/internal/services"
-	examplepb "github.com/Edbeer/client/proto/api/example/v1"
+	"github.com/Edbeer/microservices/cert"
+	"github.com/Edbeer/microservices/cmd/client/internal/interceptor"
+	"github.com/Edbeer/microservices/cmd/client/internal/services"
 
+	examplepb "github.com/Edbeer/microservices/proto/api/example/v1"
 	"google.golang.org/grpc"
-
 )
 
 func hello(exampleClient *services.ExampleClient) {
@@ -29,11 +29,16 @@ func streamWorld(exampleClient *services.ExampleClient) {
 
 const (
 	password = "password"
-	email = "edbeermtn@gmail.com"
+	email    = "edbeermtn@gmail.com"
 )
 
 func main() {
-	transportOption := grpc.WithInsecure()
+	// tlsCredentials
+	tlsCredentials, err := cert.LoadTLSCredentialsClient()
+	if err != nil {
+		log.Fatal("cannot load TLS credentials: ", err)
+	}
+	transportOption := grpc.WithTransportCredentials(tlsCredentials)
 	// cc1
 	cc1, err := grpc.Dial(":8080", transportOption)
 	if err != nil {
@@ -51,11 +56,10 @@ func main() {
 	interceptor.AuthMethods("/example.v1.ExampleService/StreamWorld", true)
 	// cc2
 	cc2, err := grpc.Dial(
-		":8080", 
+		":8080",
 		transportOption,
 		grpc.WithUnaryInterceptor(interceptor.Unary()),
 		grpc.WithStreamInterceptor(interceptor.Stream()),
-
 	)
 	if err != nil {
 		log.Fatal(err)

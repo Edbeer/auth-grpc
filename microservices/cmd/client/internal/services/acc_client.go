@@ -6,7 +6,7 @@ import (
 
 	"time"
 
-	accountpb "github.com/Edbeer/client/proto/api/account/v1"
+	accountpb "github.com/Edbeer/microservices/proto/api/account/v1"
 	"google.golang.org/grpc"
 )
 
