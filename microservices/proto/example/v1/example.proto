@@ -4,9 +4,21 @@ package example.v1;
 
 option go_package = "./;examplepb";
 
+import "google/api/annotations.proto";
+
 service ExampleService {
-    rpc Hello(HelloRequest) returns (HelloResponse) {};
-    rpc World(WorldRequest) returns (WorldResponse) {};
+    rpc Hello(HelloRequest) returns (HelloResponse) {
+        option (google.api.http) = {
+            post: "/v1/example/hello"
+            body: "*"
+        };
+    };
+    rpc World(WorldRequest) returns (WorldResponse) {
+        option (google.api.http) = {
+            post: "/v1/example/world"
+            body: "*"
+        };
+    };
     rpc StreamWorld(stream StreamWorldRequest) returns (stream StreamWorldResponse) {};
 }
 

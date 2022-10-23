@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,14 +15,15 @@ import (
 	"github.com/Edbeer/microservices/internal/transport/grpc"
 	"github.com/Edbeer/microservices/internal/transport/grpc/handlers"
 	"github.com/Edbeer/microservices/internal/transport/grpc/interceptor"
+	"github.com/Edbeer/microservices/internal/transport/rest"
 	"github.com/Edbeer/microservices/pkg/db/psql"
 	"github.com/Edbeer/microservices/pkg/db/redis"
 	"github.com/Edbeer/microservices/pkg/jwt"
-	jaegerlog "github.com/uber/jaeger-client-go/log"
-	jaegercfg "github.com/uber/jaeger-client-go/config"
-	"github.com/uber/jaeger-client-go"
-	"github.com/uber/jaeger-lib/metrics"
 	"github.com/opentracing/opentracing-go"
+	"github.com/uber/jaeger-client-go"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
+	jaegerlog "github.com/uber/jaeger-client-go/log"
+	"github.com/uber/jaeger-lib/metrics"
 )
 
 func main() {
@@ -71,7 +73,7 @@ func main() {
 	opentracing.SetGlobalTracer(tracer)
 	defer closer.Close()
 	log.Println("Opentracing connected")
-	
+
 	// jwt token manager
 	manager, err := jwt.NewManager(config.GrpsServer.JwtSecretKey)
 	if err != nil {
@@ -101,15 +103,30 @@ func main() {
 		Account:     handlers.Account,
 		Example:     handlers.Example,
 		Interceptor: interceptor,
+		Config:      config,
 	})
-
+	
 	go func() {
+		log.Println("Listening grpc server on port:", config.GrpsServer.Port)
 		if err := grpcServer.ListenAndServe(config.GrpsServer.Port); err != nil {
 			log.Fatal(err)
 		}
 	}()
-	defer grpcServer.Stop()
-
+	
+	// init rest server
+	restServer := rest.NewRestServer(rest.Deps{
+		Account: handlers.Account,
+		Example: handlers.Example,
+		Config: config,
+	})
+	go func() {
+		log.Println("Listening rest server on port:", restServer.Deps.Config.RestServer.Port)
+		if err := restServer.ListenAndServe(ctx); err != nil {
+			log.Fatal(err)
+		}
+	}()
+	
+	// Graceful Shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
@@ -119,4 +136,7 @@ func main() {
 	case done := <-ctx.Done():
 		log.Printf("ctx.Done: %v", done)
 	}
+
+	grpcServer.Stop()
+	restServer.Stop(ctx)
 }

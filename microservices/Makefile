@@ -17,6 +17,13 @@ run:
 test:
 	go test -cover -race ./...
 
+# docker
+docker-build:
+	docker build -t edbeer/acc:v1 .
+
+docker-run:
+	docker run -it --rm --name account edbeer/acc:v1
+
 # buf gen
 lint:
 	cd proto && buf lint
@@ -24,9 +31,8 @@ lint:
 gen: lint
 	cd proto && buf generate
 
-# docker
-docker-build:
-	docker build -t edbeer/acc:v1 .
-
-docker-run:
-	docker run -it --rm --name account edbeer/acc:v1
+gen-proto:
+	protoc --proto_path=proto --go_out=proto/api/ --go_opt=paths=source_relative \
+	--go-grpc_out=proto/api/ --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out=proto/api/ --grpc-gateway_opt=paths=source_relative \
+	proto/example/v1/*.proto

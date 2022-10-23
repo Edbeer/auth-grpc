@@ -4,13 +4,34 @@ package account.v1;
 
 option go_package = "./;accountpb";
 
+import "google/api/annotations.proto";
 import "account/v1/account.proto";
 
 service AccountService {
-    rpc SignUp(SignUpRequest) returns (SignUpResponse) {};
-    rpc SignIn(SignInRequest) returns (SignInResponse) {};
-    rpc RefreshTokens(RefreshTokensRequest) returns (RefreshTokensResponse) {};
-    rpc SignOut(SignOutRequest) returns (SignOutResponse) {};
+    rpc SignUp(SignUpRequest) returns (SignUpResponse) {
+        option (google.api.http) = {
+            post: "/v1/account/sign-up"
+            body: "*"
+        };
+    };
+    rpc SignIn(SignInRequest) returns (SignInResponse) {
+        option (google.api.http) = {
+            post: "/v1/account/sign-in"
+            body: "*"
+        };
+    };
+    rpc RefreshTokens(RefreshTokensRequest) returns (RefreshTokensResponse) {
+        option (google.api.http) = {
+            post: "/v1/account/refresh"
+            body: "*"
+        };
+    };
+    rpc SignOut(SignOutRequest) returns (SignOutResponse) {
+        option (google.api.http) = {
+            post: "/v1/account/sign-out"
+            body: "*"
+        };
+    };
 }
 
 message SignUpRequest {

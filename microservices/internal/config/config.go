@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	GrpsServer GrpcServerConfig
+	RestServer RestServerConfig
 	Postgres   PostgresConfig
 	Redis      RedisConfig
 	Session    SessionConfig
@@ -17,8 +18,21 @@ type Config struct {
 
 // gRPC server config
 type GrpcServerConfig struct {
-	Port         string `env:"PORT" env-default:"8080"`
+	Port              string `env:"GRPC_PORT" env-default:"8080"`
+	JwtSecretKey      string `env:"JWT" env-default:"secretkey"`
+	MaxConnectionIdle int    `env:"MAX_CONNECTION_IDLE" env-default:"10"`
+	Timeout           int    `env:"TIMEOUT" env-default:"15"`
+	MaxConnectionAge  int    `env:"MAX_CONNECTION_AGE" env-default:"10"`
+	Time              int    `env:"TIME" env-default:"120"`
+}
+
+type RestServerConfig struct {
+	Port         string `env:"REST_PORT" env-default:":9090"`
 	JwtSecretKey string `env:"JWT" env-default:"secretkey"`
+	ReadTimeout  int    `env:"READ_TIMEOUT" env-default:"10"`
+	WriteTimeout int    `env:"WRITE_TIMEOUT" env-default:"10"`
+	IdleTimeout  int    `env:"IDLE_TIMEOUT" env-default:"15"`
+	TLS          bool   `env:"TLS" env-default:"false"`
 }
 
 // Postgres config
