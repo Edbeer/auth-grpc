@@ -64,6 +64,8 @@ func (s *RestServer) ListenAndServe(ctx context.Context) error {
 	}
 
 	mux := http.NewServeMux()
+	mux.Handle("/auth.swagger.json", http.FileServer(http.Dir("./doc")))
+	mux.Handle("/example.swagger.json", http.FileServer(http.Dir("./doc")))
 	mux.Handle("/", grpcMux)
 
 	s.srv.Handler = mux

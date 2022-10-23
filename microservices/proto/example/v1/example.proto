@@ -5,6 +5,19 @@ package example.v1;
 option go_package = "./;examplepb";
 
 import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {
+      title: "Example";
+      version: "1.0";
+      contact: {
+        name: "gRPC-Gateway example";
+        url: "https://github.com/Edbeer/auth-grpc";
+        email: "edbeermtn@gmail.com";
+      };
+    };
+};
 
 service ExampleService {
     rpc Hello(HelloRequest) returns (HelloResponse) {
@@ -19,7 +32,12 @@ service ExampleService {
             body: "*"
         };
     };
-    rpc StreamWorld(stream StreamWorldRequest) returns (stream StreamWorldResponse) {};
+    rpc StreamWorld(stream StreamWorldRequest) returns (stream StreamWorldResponse) {
+        option (google.api.http) = {
+            post: "/v1/example/stream"
+            body: "*"
+        };
+    };
 }
 
 message StreamWorldRequest {

@@ -31,8 +31,16 @@ lint:
 gen: lint
 	cd proto && buf generate
 
-gen-proto:
+gen-proto-auth:
 	protoc --proto_path=proto --go_out=proto/api/ --go_opt=paths=source_relative \
 	--go-grpc_out=proto/api/ --go-grpc_opt=paths=source_relative \
 	--grpc-gateway_out=proto/api/ --grpc-gateway_opt=paths=source_relative \
+	--openapiv2_out=doc/ --openapiv2_opt=allow_merge=true,merge_file_name=auth \
+	proto/account/v1/*.proto
+
+gen-proto-ex:
+	protoc --proto_path=proto --go_out=proto/api/ --go_opt=paths=source_relative \
+	--go-grpc_out=proto/api/ --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out=proto/api/ --grpc-gateway_opt=paths=source_relative \
+	--openapiv2_out=doc/ --openapiv2_opt=allow_merge=true,merge_file_name=example \
 	proto/example/v1/*.proto

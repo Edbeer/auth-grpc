@@ -6,6 +6,19 @@ option go_package = "./;accountpb";
 
 import "google/api/annotations.proto";
 import "account/v1/account.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {
+      title: "Account";
+      version: "1.0";
+      contact: {
+        name: "gRPC-Gateway account";
+        url: "https://github.com/Edbeer/auth-grpc";
+        email: "edbeermtn@gmail.com";
+      };
+    };
+};
 
 service AccountService {
     rpc SignUp(SignUpRequest) returns (SignUpResponse) {
