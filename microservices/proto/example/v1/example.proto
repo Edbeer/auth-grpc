@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package example.v1;
+
+option go_package = "./;examplepb";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {
+      title: "Example";
+      version: "1.0";
+      contact: {
+        name: "gRPC-Gateway example";
+        url: "https://github.com/Edbeer/auth-grpc";
+        email: "edbeermtn@gmail.com";
+      };
+    };
+};
+
+service ExampleService {
+    rpc Hello(HelloRequest) returns (HelloResponse) {
+        option (google.api.http) = {
+            post: "/v1/example/hello"
+            body: "*"
+        };
+    };
+    rpc World(WorldRequest) returns (WorldResponse) {
+        option (google.api.http) = {
+            post: "/v1/example/world"
+            body: "*"
+        };
+    };
+    rpc StreamWorld(stream StreamWorldRequest) returns (stream StreamWorldResponse) {
+        option (google.api.http) = {
+            post: "/v1/example/stream"
+            body: "*"
+        };
+    };
+}
+
+message StreamWorldRequest {
+    string hello = 1;
+}
+
+message StreamWorldResponse {
+    string world = 2;
+}
+
+message HelloRequest {
+    string hello = 1;
+}
+
+message HelloResponse {
+    string hello = 1;
+}
+
+message WorldRequest {
+    string world = 1;
+}
+
+message WorldResponse {
+    string world = 1;
+}

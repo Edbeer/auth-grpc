@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	examplepb "github.com/Edbeer/proto/api/example/v1"
+	examplepb "github.com/Edbeer/microservices/proto/api/example/v1"
 )
 
 type Example struct {

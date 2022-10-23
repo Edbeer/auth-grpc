@@ -6,8 +6,9 @@ import (
 
 	"time"
 
-	"github.com/go-redis/redis/v9"
 	"github.com/Edbeer/microservices/internal/core"
+	"github.com/go-redis/redis/v9"
+	"github.com/opentracing/opentracing-go"
 )
 
 // Auth Storage
@@ -22,6 +23,9 @@ func newAccountStorage(redis *redis.Client) *accountStorage {
 
 // Get user by id
 func (s *accountStorage) GetByIDCtx(ctx context.Context, key string) (*core.User, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "accountRedis.GetByIDCtx")
+	defer span.Finish()
+	
 	userBytes, err := s.redis.Get(ctx, key).Bytes()
 	if err != nil {
 		return nil, err
@@ -35,6 +39,9 @@ func (s *accountStorage) GetByIDCtx(ctx context.Context, key string) (*core.User
 
 // Cache user with duration in seconds
 func (s *accountStorage) SetUserCtx(ctx context.Context, key string, seconds int, user *core.User) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "accountRedis.SetUserCtx")
+	defer span.Finish()
+	
 	userBytes, err := json.Marshal(user)
 	if err != nil {
 		return err

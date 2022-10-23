@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package account.v1;
+
+option go_package = "./;accountpb";
+
+import "google/api/annotations.proto";
+import "account/v1/account.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {
+      title: "Account";
+      version: "1.0";
+      contact: {
+        name: "gRPC-Gateway account";
+        url: "https://github.com/Edbeer/auth-grpc";
+        email: "edbeermtn@gmail.com";
+      };
+    };
+};
+
+service AccountService {
+    rpc SignUp(SignUpRequest) returns (SignUpResponse) {
+        option (google.api.http) = {
+            post: "/v1/account/sign-up"
+            body: "*"
+        };
+    };
+    rpc SignIn(SignInRequest) returns (SignInResponse) {
+        option (google.api.http) = {
+            post: "/v1/account/sign-in"
+            body: "*"
+        };
+    };
+    rpc RefreshTokens(RefreshTokensRequest) returns (RefreshTokensResponse) {
+        option (google.api.http) = {
+            post: "/v1/account/refresh"
+            body: "*"
+        };
+    };
+    rpc SignOut(SignOutRequest) returns (SignOutResponse) {
+        option (google.api.http) = {
+            post: "/v1/account/sign-out"
+            body: "*"
+        };
+    };
+}
+
+message SignUpRequest {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+    string role = 4;
+}
+
+message SignUpResponse {
+    User user = 1;
+}
+
+message SignInRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message SignInResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+message RefreshTokensRequest {
+    string refresh_token = 1;
+}
+
+message RefreshTokensResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+message SignOutRequest {
+    string refresh_token = 1;
+}
+
+message SignOutResponse {}

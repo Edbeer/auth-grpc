@@ -7,8 +7,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/go-redis/redis/v9"
 	"github.com/Edbeer/microservices/internal/core"
+	"github.com/go-redis/redis/v9"
+	"github.com/opentracing/opentracing-go"
 )
 
 type sessionStorage struct {
@@ -20,6 +21,9 @@ func newSessionStorage(redis *redis.Client) *sessionStorage {
 }
 
 func (s *sessionStorage) CreateSession(ctx context.Context, session *core.Session, expire int) (string, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "sessionRedis.CreateSession")
+	defer span.Finish()
+	
 	session.RefreshToken = newRefreshToken()
 
 	sessionBytes, err := json.Marshal(&session)
@@ -35,6 +39,8 @@ func (s *sessionStorage) CreateSession(ctx context.Context, session *core.Sessio
 
 // Get user id from session
 func (s *sessionStorage) GetSessionByToken(ctx context.Context, refreshToken string) (*core.Session, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "sessionRedis.GetSessionByToken")
+	defer span.Finish()
 
 	sessionBytes, err := s.redis.Get(ctx, refreshToken).Bytes()
 	if err != nil {
@@ -50,6 +56,9 @@ func (s *sessionStorage) GetSessionByToken(ctx context.Context, refreshToken str
 
 // Delete session cookie
 func (s *sessionStorage) DeleteSession(ctx context.Context, refreshToken string) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "sessionRedis.DeleteSession")
+	defer span.Finish()
+	
 	if err := s.redis.Del(ctx, refreshToken).Err(); err != nil {
 		return err
 	}
